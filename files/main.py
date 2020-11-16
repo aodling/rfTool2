@@ -26,6 +26,11 @@ def get_configurations():
     pass
     
 
+def get_adc_string(y):
+    ret =""
+    for v in y:
+        ret += "{:d}\n".format(v)
+    return ret
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -75,4 +80,6 @@ if __name__ == '__main__':
 
 
     plt.show()
+
+    print(get_adc_string(y))
 
