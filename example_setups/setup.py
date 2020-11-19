@@ -3,8 +3,8 @@
 class setup:
 
     def __init__(self, frequency: list, amplitude: list) -> None:
-        self.f = list(frequency)
-        self.amp = list(amplitude)
+        self.f = frequency
+        self.amp = amplitude
 
     @property
     def amplitude(self):

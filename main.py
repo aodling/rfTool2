@@ -5,7 +5,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import example_setups
+from example_setups import single_tone_config
 from rf_helpers.rf_controller import rfController
 from common_math.math import safe_log10
 
@@ -76,6 +76,6 @@ if __name__ == '__main__':
     plt.show()
 
     print(get_adc_string(y))
-
-    print(example_setups.single_tone_config.single_tone_config.print_configuration())
+    stc = single_tone_config.single_tone_config()
+    print(stc.print_configuration())
 

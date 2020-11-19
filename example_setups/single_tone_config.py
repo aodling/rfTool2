@@ -12,5 +12,5 @@ class single_tone_config(generic_configuration):
         amplitudes = [0, -3, -6, -20]
         for f in frequencies:
             for a in amplitudes:
-                super().config_list.append(setup(f,a))
+                self.config_list.append(setup(f,a))
 
