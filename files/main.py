@@ -17,8 +17,12 @@ def safe_log10(x, eps=1e-10):
     return result
 
 
-frequencies = [1e9, 2e9, 3e9, 4e9, 5e9]
-amplitudes  = [0, -3, -6, -12]
+frequencies = list([1e6, 1e7])
+for i in range(1, 50):
+    frequencies.append(i*1e8)
+amplitudes = [0, -3, -6, -20]
+
+
 
 
 
