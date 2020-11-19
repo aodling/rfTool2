@@ -4,31 +4,22 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import matplotlib.pyplot as plt
 import numpy as np
-from rfController import rfController
+from rf_helpers.rf_controller import rfController
+from common_math.math import safe_log10
+
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-def safe_log10(x, eps=1e-10):
-    result = np.where(x > eps, x, -10)
-    np.log10(result, out=result, where=result > 0)
-    return result
-
 
 frequencies = list([1e6, 1e7])
 for i in range(1, 50):
     frequencies.append(i*1e8)
 amplitudes = [0, -3, -6, -20]
 
-
-
-
-
 def get_configurations():
     pass
-    
+
 
 def get_adc_string(y):
     ret =""
