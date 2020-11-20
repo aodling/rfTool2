@@ -2,11 +2,14 @@
 
 # Press Skift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import shutil
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from example_setups import single_tone_config
 from rf_helpers.rf_controller import rfController
+from rf_helpers import configuration_generator
 from common_math.math import safe_log10
 
 
@@ -77,5 +80,18 @@ if __name__ == '__main__':
 
     print(get_adc_string(y))
     stc = single_tone_config.single_tone_config()
+    path = "tmpout"
+    filename = "testfile1.txt"
+    configuration_generator.generate_ad_file(stc.config_list[0], path, p,filename)
+    i = 0
+    #Clear all previous data
+    shutil.rmtree("stc")
+    for cfg in stc:
+        path = "stc/cfg{}".format(i)
+        filename = "data"
+        configuration_generator.generate_ad_file(cfg, path, p, filename)
+        i += 1
+
+
     print(stc.print_configuration())
 
