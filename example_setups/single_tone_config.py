@@ -14,3 +14,15 @@ class single_tone_config(generic_configuration):
             for a in amplitudes:
                 self.config_list.append(setup(f,a))
 
+
+class default_config(generic_configuration):
+    def __init__(self):
+        super().__init__()
+        frequencies = list([1e6, 1e7, 1e8])
+        amplitudes = [-3]
+        for f in frequencies:
+            for a in amplitudes:
+                self.config_list.append(setup(f,a))
+
+
+

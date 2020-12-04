@@ -3,6 +3,7 @@
 # Press Skift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import shutil
+import subprocess
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +12,7 @@ from example_setups import single_tone_config
 from rf_helpers.rf_controller import rfController
 from rf_helpers import configuration_generator
 from common_math.math import safe_log10
+from pathlib import Path
 
 
 def print_hi(name):
@@ -28,6 +30,18 @@ def get_adc_string(y):
     for v in y:
         ret += "{:d}\n".format(v)
     return ret
+
+def download_cfg(d):
+    cmd = ["scp","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", Path(d) / "datat.txt", "root@192.168.0.10:"]
+    print(cmd)
+    #print(" ".join(cmd))
+    print("Downloading config {}".format(d))
+    subprocess.run(cmd, timeout=100)
+    print("Download Completed. Loading vector...")
+    cmdrun = ["ssh","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", "root@192.168.0.10",
+              "./myapp/ad9081_xtra/app_ads9/debug/ad9081_xtra tx --file datat.txt"]
+    subprocess.run(cmdrun,timeout = 1000)
+    print("Downloaded vector.")
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -76,22 +90,29 @@ if __name__ == '__main__':
     axs[2].grid(True)
 
 
-    plt.show()
+    #plt.show()
 
-    print(get_adc_string(y))
-    stc = single_tone_config.single_tone_config()
+    #print(get_adc_string(y))
+    # This should be like this
+    #stc = single_tone_config.single_tone_config()
+    # But now it is
+    stc = single_tone_config.default_config()
     path = "tmpout"
     filename = "testfile1.txt"
     configuration_generator.generate_ad_file(stc.config_list[0], path, p,filename)
     i = 0
     #Clear all previous data
-    shutil.rmtree("stc")
+    try:
+        shutil.rmtree("stc")
+    except FileNotFoundError:
+        pass
     for cfg in stc:
         path = "stc/cfg{}".format(i)
-        filename = "data"
+        filename = "datat"
         configuration_generator.generate_ad_file(cfg, path, p, filename)
         i += 1
+        download_cfg(path)
 
 
-    print(stc.print_configuration())
+    #print(stc.print_configuration())
 
