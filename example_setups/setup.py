@@ -20,3 +20,9 @@ class setup:
             r += "  f={} at {} dBFS\n".format(freq, amp)
         return r
 
+    def get_filename(self):
+        #TODO: Implement something useful
+        r = ""
+        for s in self.get_signals():
+            r += "A{}_dBFS_F{}_MHz".format(s.amplitude,int(s.frequency/1e6))
+        return r

@@ -87,11 +87,12 @@ if __name__ == '__main__':
     filename = "testfile1.txt"
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
+
     #Clear all previous data
-    shutil.rmtree("stc", ignore_errors=True)
+    shutil.rmtree(stc.get_path(), ignore_errors=True)
     for cfg in stc:
-        path = "stc/cfg{}".format(i)
-        filename = "data"
+        path = "{}/cfg{}".format(stc.get_path(),i)
+        filename = stc.get_filename(i)
         configuration_generator.generate_ad_file(cfg, path, p, filename)
         i += 1
 

@@ -7,6 +7,7 @@ class single_tone_config(generic_configuration):
 
     def __init__(self):
         super().__init__()
+        super().set_path("singleToneConfigs")
         frequencies = list([1e6, 1e7])
         for i in range(1, 50):
             frequencies.append(i * 1e8)

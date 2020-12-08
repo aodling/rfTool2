@@ -7,8 +7,9 @@ class temp_config(generic_configuration):
 
     def __init__(self):
         super().__init__()
-        frequencies = list([1e6, 1e7])
-        for i in range(1, 5):
+        super().set_path("tmpCfg")
+        frequencies = list([1e8])
+        for i in range(7, 10):
             frequencies.append(i * 1e8)
         amplitudes = [0, -6]
         for f in frequencies:
