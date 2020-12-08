@@ -1,4 +1,5 @@
 from example_setups.generic_configuration import generic_configuration
+from example_setups.rfsignal import rfsignal
 from example_setups.setup import setup
 
 
@@ -12,5 +13,7 @@ class single_tone_config(generic_configuration):
         amplitudes = [0, -3, -6, -20]
         for f in frequencies:
             for a in amplitudes:
-                self.config_list.append(setup(f,a))
+                s = setup()
+                s.add_signal(rfsignal(f,a))
+                self.config_list.append(s)
 

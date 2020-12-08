@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from common_math.math import safe_log10
+from example_setups.setup import setup
 
 
 class rfController:
@@ -21,13 +22,15 @@ class rfController:
     def get_max_mag(self):
         return self.resolution
 
-    def get_samples(self, frequency, dBFS):
-        A = self.resolution * 10 ** (dBFS / 20)
-        freq = self.get_real_frequency(frequency)
+    def get_samples(self, stup: list):
         y = np.zeros(self.length, np.int32)
-
-        for i in range(0, self.length):
-            y[i] = int(A * sin(2 * pi * freq * i * self.Ts))
+        for s in stup:
+            dBFS = s.amplitude
+            frequency = s.frequency
+            A = self.resolution * 10 ** (dBFS / 20)
+            freq = self.get_real_frequency(frequency)
+            for i in range(0, self.length):
+                y[i] += int(A * sin(2 * pi * freq * i * self.Ts))
         return y
 
     def get_real_frequency(self, frequency) -> float:

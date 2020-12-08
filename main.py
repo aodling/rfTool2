@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from example_setups import single_tone_config
+from example_setups.rfsignal import rfsignal
 from rf_helpers.rf_controller import rfController
 from rf_helpers import configuration_generator
 from common_math.math import safe_log10
@@ -35,7 +36,7 @@ if __name__ == '__main__':
 
     p = rfController(12e9)
 
-    y = p.get_samples(5e9,-12)
+    y = p.get_samples([rfsignal(5e9,-12)])
     x = p.get_xaxis()
 
     fig, axs = plt.subplots(3, 1, constrained_layout=True)
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p,filename)
     i = 0
     #Clear all previous data
-    shutil.rmtree("stc")
+    shutil.rmtree("stc", ignore_errors=True)
     for cfg in stc:
         path = "stc/cfg{}".format(i)
         filename = "data"
