@@ -9,6 +9,8 @@ import numpy as np
 
 from example_setups import single_tone_config
 from example_setups.rfsignal import rfsignal
+from example_setups.temp_config import temp_config
+from example_setups.temp_small_config import temp_small_config
 from rf_helpers.rf_controller import rfController
 from rf_helpers import configuration_generator
 from common_math.math import safe_log10
@@ -80,10 +82,10 @@ if __name__ == '__main__':
     plt.show()
 
     print(get_adc_string(y))
-    stc = single_tone_config.single_tone_config()
+    stc = temp_config()
     path = "tmpout"
     filename = "testfile1.txt"
-    configuration_generator.generate_ad_file(stc.config_list[0], path, p,filename)
+    configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
     #Clear all previous data
     shutil.rmtree("stc", ignore_errors=True)

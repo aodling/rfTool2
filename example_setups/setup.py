@@ -14,7 +14,7 @@ class setup:
 
     def __str__(self):
         r = "The setup has following signals:\n"
-        for s in cfg.get_signals():
+        for s in self.get_signals():
             amp = s.amplitude
             freq = s.frequency
             r += "  f={} at {} dBFS\n".format(freq, amp)
