@@ -113,6 +113,10 @@ if __name__ == '__main__':
         i += 1
         download_cfg(path)
 
+        # Configure Spec
+
+        #Get Data From Spec to Path
+
 
     #print(stc.print_configuration())
 
