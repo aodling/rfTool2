@@ -39,7 +39,7 @@ def download_cfg(d):
     subprocess.run(cmd, timeout=100)
     print("Download Completed. Loading vector...")
     cmdrun = ["ssh","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", "root@192.168.0.10",
-              "./myapp/ad9081_xtra/app_ads9/debug/ad9081_xtra tx --file datat.txt"]
+              "./ad9083_xtra/app_ads9/debug/ad9081_xtra tx --file datat.txt"]
     subprocess.run(cmdrun,timeout = 1000)
     print("Downloaded vector.")
 
