@@ -84,7 +84,7 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     specan.write_str(r"MMEM:NAME 'c:\temp\Dev_Screenshot.png'")
     specan.write_str("HCOP:IMM")  # Make the screenshot now
     specan.query_opc()  # Wait for the screenshot to be saved
-    print("Output Path: {}".format(p))
+    p = Path(output_folder) / "screenshot.png"
     specan.read_file_from_instrument_to_pc(r"c:\temp\Dev_Screenshot.png",
                                            str(p.absolute()))  # Transfer the instrument file to the PC
     print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
