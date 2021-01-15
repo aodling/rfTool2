@@ -2,6 +2,7 @@
 # Preconditions:
 # - Installed RsInstrument Python module Version 1.8.0 or newer from pypi.org
 # - Installed VISA e.g. R&S Visa 5.12.x or newer
+from pathlib import Path
 
 from RsInstrument import *  # The RsInstrument package is hosted on pypi.org, see Readme.txt for more details
 from time import time
@@ -40,10 +41,11 @@ def clear_specan(specan, UpdateDisplay: bool = False):
 # Basic Settings:
 # -----------------------------------------------------------
 
-def do_basic_sweep(specan):
+def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
+                   output_folder = r"C:\Temp\\" ):
     specan.write_str('DISP:WIND:TRAC:Y:RLEV 10.0')  # Setting the Reference Level
-    specan.write_str('FREQ:CENT 3.0 GHz')  # Setting the center frequency
-    specan.write_str('FREQ:SPAN 200 MHz')  # Setting the span
+    specan.write_str('FREQ:CENT {:.1f} GHz'.format(center_freq))  # Setting the center frequency
+    specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
     specan.write_str('BAND 100 kHz')  # Setting the RBW
     specan.write_str('BAND:VID 300kHz')  # Setting the VBW
     specan.write_str('SWE:POIN 10001')  # Setting the sweep points
@@ -82,9 +84,10 @@ def do_basic_sweep(specan):
     specan.write_str(r"MMEM:NAME 'c:\temp\Dev_Screenshot.png'")
     specan.write_str("HCOP:IMM")  # Make the screenshot now
     specan.query_opc()  # Wait for the screenshot to be saved
+    print("Output Path: {}".format(p))
     specan.read_file_from_instrument_to_pc(r"c:\temp\Dev_Screenshot.png",
-                                           r"c:\Temp\PC_Screenshot.png")  # Transfer the instrument file to the PC
-    print(r"Instrument screenshot file saved to PC 'c:\Temp\PC_Screenshot.png'")
+                                           str(p.absolute()))  # Transfer the instrument file to the PC
+    print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
 
 
 # Close the session

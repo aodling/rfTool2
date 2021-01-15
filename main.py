@@ -17,6 +17,8 @@ from rf_helpers import configuration_generator
 from common_math.math import safe_log10
 from pathlib import Path
 
+from rs_integration.rs_integration import instrument_init, clear_specan, do_basic_sweep, disconnect
+
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -34,8 +36,8 @@ def get_adc_string(y):
         ret += "{:d}\n".format(v)
     return ret
 
-def download_cfg(d):
-    cmd = ["scp","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", Path(d) / "datat.txt", "root@192.168.0.10:"]
+def download_cfg(d,filename : str):
+    cmd = ["scp","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", Path(d) / filename, "root@192.168.0.10:datat.txt"]
     print(cmd)
     #print(" ".join(cmd))
     print("Downloading config {}".format(d))
@@ -105,6 +107,9 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
 
+    specan = instrument_init("10.10.0.231")
+    print("Clearing data on SPECAN")
+    clear_specan(specan,True)
     #Clear all previous data
     try:
         shutil.rmtree("stc")
@@ -115,12 +120,13 @@ if __name__ == '__main__':
         filename = stc.get_filename(i)
         configuration_generator.generate_ad_file(cfg, path, p, filename)
         i += 1
-        download_cfg(path)
+        download_cfg(path, filename + ".txt")
 
         # Configure Spec
+        do_basic_sweep(specan,output_folder=path)
 
         #Get Data From Spec to Path
 
-
+    disconnect(specan)
     #print(stc.print_configuration())
 
