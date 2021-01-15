@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import shutil
 import subprocess
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,6 +102,7 @@ if __name__ == '__main__':
     # This should be like this
     #stc = temp_config()
     # But now it is
+    startTime = time()
     stc = single_tone_config.default_config()
     path = "tmpout"
     filename = "testfile1.txt"
@@ -123,10 +125,12 @@ if __name__ == '__main__':
         download_cfg(path, filename + ".txt")
 
         # Configure Spec
-        do_basic_sweep(specan,output_folder=path)
+        do_basic_sweep(specan,output_folder=path,span_MHz=6000)
 
         #Get Data From Spec to Path
 
     disconnect(specan)
+    stopTime = time()
+    print(f'Total Runtime: {stopTime - startTime:.3f} secs')
     #print(stc.print_configuration())
 

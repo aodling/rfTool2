@@ -42,8 +42,9 @@ def clear_specan(specan, UpdateDisplay: bool = False):
 # -----------------------------------------------------------
 
 def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
-                   output_folder = r"C:\Temp\\" ):
-    specan.write_str('DISP:WIND:TRAC:Y:RLEV 10.0')  # Setting the Reference Level
+                   output_folder = r"C:\Temp\\" ,
+                   filename = "measured"):
+    specan.write_str('DISP:WIND:TRAC:Y:RLEV 0.0')  # Setting the Reference Level
     specan.write_str('FREQ:CENT {:.1f} GHz'.format(center_freq))  # Setting the center frequency
     specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
     specan.write_str('BAND 100 kHz')  # Setting the RBW
@@ -64,10 +65,18 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     t = time()
     trace = specan.query_bin_or_ascii_float_list('FORM ASC;:TRAC? TRACE1')  # Query ascii array of floats
     print(f'Instrument returned {len(trace)} points in the ascii trace, query duration {time() - t:.3f} secs')
+    with open(Path(output_folder) / "{}.trace".format(filename),'w') as fp:
+        for e in trace:
+
+            fp.write(str(e) + "\n")
     t = time()
     specan.bin_float_numbers_format = BinFloatFormat.Single_4bytes  # This tells the driver in which format to expect the binary float data
     trace = specan.query_bin_or_ascii_float_list(
         'FORM REAL,32;:TRAC? TRACE1')  # Query binary array of floats - the query function is the same as for the ASCII format
+
+    with open(Path(output_folder) / "{}.bintrace".format(filename),'w') as fp:
+        for e in trace:
+            fp.write(str(e) + "\n")
     print(f'Instrument returned {len(trace)} points in the binary trace, query duration {time() - t:.3f} secs')
     # -----------------------------------------------------------
     # Setting the marker to max and querying the X and Y
@@ -84,7 +93,7 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     specan.write_str(r"MMEM:NAME 'c:\temp\Dev_Screenshot.png'")
     specan.write_str("HCOP:IMM")  # Make the screenshot now
     specan.query_opc()  # Wait for the screenshot to be saved
-    p = Path(output_folder) / "screenshot.png"
+    p = Path(output_folder) / "{}_meas.png".format(filename)
     specan.read_file_from_instrument_to_pc(r"c:\temp\Dev_Screenshot.png",
                                            str(p.absolute()))  # Transfer the instrument file to the PC
     print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))

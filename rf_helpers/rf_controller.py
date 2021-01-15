@@ -10,10 +10,10 @@ from example_setups.setup import setup
 
 class rfController:
 
-    def __init__(self, Fs, length=2 ** 14, resolution=2 ** 12):
+    def __init__(self, Fs, length=2 ** 14, resolution=2 ** 16):
         self.Fs = int(Fs)
         self.length = length
-        self.resolution = int(resolution / 2)
+        self.resolution = int((resolution-1) / 2)
         self.Ts = 1 / self.Fs
 
     def _tot_time(self):
