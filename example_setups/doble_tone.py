@@ -15,8 +15,8 @@ class two_tone_config(generic_configuration):
             frequencies.append(i * 5e8)
         amplitudes = [0, -3, -6, -20]
         separation = [1e6, 1e7, 1e8]
-        for f in frequencies:
-            for a in amplitudes:
+        for a in amplitudes:
+            for f in frequencies:
                 for sep in separation:
                     s = setup()
                     #Add signal - and + separation

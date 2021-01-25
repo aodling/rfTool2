@@ -14,8 +14,9 @@ class single_tone_config(generic_configuration):
         for i in range(1, 50):
             frequencies.append(i * 1e8)
         amplitudes = [0, -3, -6, -20]
-        for f in frequencies:
-            for a in amplitudes:
+
+        for a in amplitudes:
+            for f in frequencies:
                 s = setup()
                 s.add_signal(rfsignal(f, a))
                 self.config_list.append(s)
@@ -28,9 +29,9 @@ class default_config(generic_configuration):
         super().set_path("defaultConfig")
         super().set_rbw(100e3)
         frequencies = list([35e8,36e8])
-        amplitudes = [-3]
-        for f in frequencies:
-            for a in amplitudes:
+        amplitudes = [-3,-20]
+        for a in amplitudes:
+            for f in frequencies:
                 s = setup()
                 s.add_signal(rfsignal(f, a))
                 self.config_list.append(s)

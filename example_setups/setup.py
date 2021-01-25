@@ -9,6 +9,13 @@ class setup:
     def add_signal(self, s: rfsignal):
         self.rfsignals.append(s)
 
+    def get_max_power(self):
+        mpow = -100
+        for s in self.rfsignals:
+            if s.amplitude > mpow:
+                mpow = s.amplitude
+        return mpow
+
     def get_signals(self) -> rfsignal:
         return self.rfsignals
 

@@ -42,10 +42,11 @@ def clear_specan(specan, UpdateDisplay: bool = False):
 # -----------------------------------------------------------
 
 def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
+                   rlev = 0.0,
                    rbw_khz = 100,
                    output_folder = r"C:\Temp\\" ,
                    filename = "measured"):
-    specan.write_str('DISP:WIND:TRAC:Y:RLEV 0.0')  # Setting the Reference Level
+    specan.write_str('DISP:WIND:TRAC:Y:RLEV {:.1f}'.format(rlev))  # Setting the Reference Level
     specan.write_str('FREQ:CENT {:.1f} GHz'.format(center_freq))  # Setting the center frequency
     specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
     specan.write_str('BAND {} kHz'.format(int(rbw_khz)))  # Setting the RBW
