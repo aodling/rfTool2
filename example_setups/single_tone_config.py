@@ -35,14 +35,4 @@ class default_config(generic_configuration):
                 s.add_signal(rfsignal(f, a))
                 self.config_list.append(s)
 
-class default_config(generic_configuration):
-    def __init__(self):
-        super().__init__()
-        super().set_path("defaultConfig")
-        frequencies = list([35e8,36e8])
-        amplitudes = [0, -3, -6, -20]
-        for f in frequencies:
-            for a in amplitudes:
-                s = setup()
-                s.add_signal(rfsignal(f, a))
-                self.config_list.append(s)
+
