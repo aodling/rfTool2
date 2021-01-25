@@ -4,15 +4,29 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import shutil
 import subprocess
-
-import matplotlib.pyplot as plt
-import numpy as np
+from  example_setups import doble_tone
+from time import time
+do_plots =  True
+try:
+    import matplotlib.pyplot as plt
+    import numpy as np
+except ModuleNotFoundError:
+    do_plots = False
+    print("Ignoring plots")
 
 from example_setups import single_tone_config
+from example_setups.rfsignal import rfsignal
+from example_setups.temp_config import temp_config
+from example_setups.temp_small_config import temp_small_config
 from rf_helpers.rf_controller import rfController
 from rf_helpers import configuration_generator
 from common_math.math import safe_log10
 from pathlib import Path
+use_spec = True
+try:
+    from rs_integration.rs_integration import instrument_init, clear_specan, do_basic_sweep, disconnect
+except ModuleNotFoundError:
+    use_spec = False
 
 
 def print_hi(name):
@@ -31,8 +45,8 @@ def get_adc_string(y):
         ret += "{:d}\n".format(v)
     return ret
 
-def download_cfg(d):
-    cmd = ["scp","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", Path(d) / "datat.txt", "root@192.168.0.10:"]
+def download_cfg(d,filename : str):
+    cmd = ["scp","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", Path(d) / filename, "root@192.168.0.10:datat.txt"]
     print(cmd)
     #print(" ".join(cmd))
     print("Downloading config {}".format(d))
@@ -49,74 +63,101 @@ if __name__ == '__main__':
 
     p = rfController(12e9)
 
-    y = p.get_samples(5e9,-12)
+    y = p.get_samples([rfsignal(5e9,-12)])
     x = p.get_xaxis()
+    if do_plots:
+        fig, axs = plt.subplots(3, 1, constrained_layout=True)
 
-    fig, axs = plt.subplots(3, 1, constrained_layout=True)
+        axs[0].plot(x,y)
+        axs[0].set_title("Time plot")
+        axs[0].set_xlabel("Time (s)")
+        axs[0].set_ylabel("ADC Value")
 
-    axs[0].plot(x,y)
-    axs[0].set_title("Time plot")
-    axs[0].set_xlabel("Time (s)")
-    axs[0].set_ylabel("ADC Value")
+        Y = np.fft.fft(y/p.get_max_mag())
+        #Windowing function
+        win = np.ones( len(Y),dtype = int)
+        #Magnitude spectrum with compensation for real spectrum  and windowing
+        s_mag = np.abs(Y) * 2 / np.sum(win)
+        s_dbfs = 20 * safe_log10(s_mag)
+        freq = np.fft.fftfreq(len(Y), d=p.Ts)
 
-    Y = np.fft.fft(y/p.get_max_mag())
-    #Windowing function
-    win = np.ones( len(Y),dtype = int)
-    #Magnitude spectrum with compensation for real spectrum  and windowing
-    s_mag = np.abs(Y) * 2 / np.sum(win)
-    s_dbfs = 20 * safe_log10(s_mag)
-    freq = np.fft.fftfreq(len(Y), d=p.Ts)
+        axs[1].plot(freq, s_dbfs)
+        axs[1].set_title("Spectral Plot")
+        axs[1].set_xlabel("Frequency (Hz)")
+        axs[1].set_ylabel("Power (dBFS)")
+        axs[1].axis([np.min(freq), np.max(freq), -100,0])
+        axs[1].grid(True)
 
-    axs[1].plot(freq, s_dbfs)
-    axs[1].set_title("Spectral Plot")
-    axs[1].set_xlabel("Frequency (Hz)")
-    axs[1].set_ylabel("Power (dBFS)")
-    axs[1].axis([np.min(freq), np.max(freq), -100,0])
-    axs[1].grid(True)
+        Y = np.fft.fft(np.concatenate((y,y)) / p.get_max_mag())
+        # Windowing function
+        win = np.ones(len(Y), dtype=int)
+        # Magnitude spectrum with compensation for real spectrum  and windowing
+        s_mag = np.abs(Y) * 2 / np.sum(win)
+        s_dbfs = 20 * safe_log10(s_mag)
+        freq = np.fft.fftfreq(len(Y), d=p.Ts)
 
-    Y = np.fft.fft(np.concatenate((y,y)) / p.get_max_mag())
-    # Windowing function
-    win = np.ones(len(Y), dtype=int)
-    # Magnitude spectrum with compensation for real spectrum  and windowing
-    s_mag = np.abs(Y) * 2 / np.sum(win)
-    s_dbfs = 20 * safe_log10(s_mag)
-    freq = np.fft.fftfreq(len(Y), d=p.Ts)
-
-    axs[2].plot(freq, s_dbfs)
-    axs[2].set_title("Spectral Plot")
-    axs[2].set_xlabel("Frequency (Hz)")
-    axs[2].set_ylabel("Power (dBFS)")
-    axs[2].axis([np.min(freq), np.max(freq), -100, 0])
-    axs[2].grid(True)
+        axs[2].plot(freq, s_dbfs)
+        axs[2].set_title("Spectral Plot")
+        axs[2].set_xlabel("Frequency (Hz)")
+        axs[2].set_ylabel("Power (dBFS)")
+        axs[2].axis([np.min(freq), np.max(freq), -100, 0])
+        axs[2].grid(True)
 
 
-    #plt.show()
+        #plt.show()
 
     #print(get_adc_string(y))
     # This should be like this
-    #stc = single_tone_config.single_tone_config()
+    #stc = temp_config()
     # But now it is
-    stc = single_tone_config.default_config()
+    startTime = time()
+    dc  = single_tone_config.default_config()
+    stc = single_tone_config.single_tone_config()
+    ttc = doble_tone.two_tone_config()
     path = "tmpout"
     filename = "testfile1.txt"
-    configuration_generator.generate_ad_file(stc.config_list[0], path, p,filename)
+    configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
-    #Clear all previous data
+    confs_to_run = [dc, stc, ttc]
+    if use_spec:
+        specan = instrument_init("10.10.0.231")
+        print("Clearing data on SPECAN")
+        clear_specan(specan,True)
+        #Clear all previous data
+    for config in confs_to_run:
+        i = 0
+        try:
+            shutil.rmtree(config.get_path())
+        except FileNotFoundError:
+            pass
+        for cfg in config:
+            path = "{}/cfg{}".format(config.get_path(),i)
+            filename = config.get_filename(i)
+            configuration_generator.generate_ad_file(cfg, path, p, filename)
+            i += 1
+            # Configure Spec
+            if False: #use_spec:
+                #DOn't download if no spec is configured
+                download_cfg(path, filename + ".txt")
+                do_basic_sweep(specan,output_folder=path,span_MHz=6000,filename = filename)
+    if use_spec:
+        disconnect(specan)
+    stopTime = time()
+    print(f'Total Runtime: {stopTime - startTime:.3f} secs')
+
+            #Get Data From Spec to Path
+"""    i = 0
+    path = ttc.get_path()
     try:
-        shutil.rmtree("stc")
+        shutil.rmtree(ttc.get_path())
     except FileNotFoundError:
         pass
-    for cfg in stc:
-        path = "stc/cfg{}".format(i)
-        filename = "datat"
+    for cfg in ttc:
+        path = "{}/cfg{}".format(ttc.get_path(), i)
+        filename = ttc.get_filename(i)
         configuration_generator.generate_ad_file(cfg, path, p, filename)
         i += 1
-        download_cfg(path)
-
-        # Configure Spec
-
-        #Get Data From Spec to Path
+"""
 
 
-    #print(stc.print_configuration())
 

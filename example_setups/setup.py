@@ -1,24 +1,28 @@
+from example_setups.rfsignal import rfsignal
 
 
 class setup:
 
-    def __init__(self, frequency: list, amplitude: list) -> None:
-        self.f = frequency
-        self.amp = amplitude
+    def __init__(self) -> None:
+        self.rfsignals = list()
 
-    @property
-    def amplitude(self):
-        """
+    def add_signal(self, s: rfsignal):
+        self.rfsignals.append(s)
 
-        :rtype: The amplitude in dBFS for the configuration
-        :type self:
-        """
-        return self.amp
+    def get_signals(self) -> rfsignal:
+        return self.rfsignals
 
-    @property
-    def frequency(self):
-        """
+    def __str__(self):
+        r = "The setup has following signals:\n"
+        for s in self.get_signals():
+            amp = s.amplitude
+            freq = s.frequency
+            r += "  f={} at {} dBFS\n".format(freq, amp)
+        return r
 
-        :rtype: Frequency given in Hz as a number
-        """
-        return self.f
+    def get_filename(self):
+        #TODO: Implement something useful
+        r = ""
+        for s in self.get_signals():
+            r += "_F{}_MHz_P{}_dBFS_".format(s.amplitude,int(s.frequency/1e6))
+        return r
