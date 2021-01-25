@@ -24,6 +24,9 @@ class generic_configuration:
     def set_rbw(self,rbw : int):
         self.rbw = rbw
 
+    def get_rbw_kHz(self):
+        return self.rbw / 1e3
+
     def get_filename(self, index):
         """ Overload function to create custom filenames """
         return "{}{}{}kHz".format(self.file_prefix,

@@ -99,6 +99,26 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
                                            str(p.absolute()))  # Transfer the instrument file to the PC
     print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
 
+def store_config_string(specan,
+                   output_folder = r"C:\Temp\\" ,
+                   filename = "measured"):
+    rbw = specan.query_float("BAND?")
+    ref_lvl = specan.query_float('DISP:WIND:TRAC:Y:RLEV?')  # Setting the Reference Level
+    cf =  specan.query_float("FREQ:CENT?")
+    span = specan.query_float('FREQ:SPAN?')
+    att = specan.query_float('INP:ATT?')
+    s = ""
+    s += "RBW,{}\n".format(rbw)
+    s += "RefLvl,{}\n".format(ref_lvl)
+    s += "CenterFreq,{}\n".format(cf)
+    s += "Span,{}\n".format(span)
+    s += "Att,{}\n".format(att)
+
+    p = Path(output_folder) / "{}_sa_config.txt".format(filename)
+    with open(p,'w') as fp:
+        fp.write(s)
+
+
 
 # Close the session
 def disconnect(specan):

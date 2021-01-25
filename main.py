@@ -25,7 +25,7 @@ from common_math.math import safe_log10
 from pathlib import Path
 use_spec = True
 try:
-    from rs_integration.rs_integration import instrument_init, clear_specan, do_basic_sweep, disconnect
+    from rs_integration.rs_integration import instrument_init, clear_specan, do_basic_sweep, disconnect, store_config_string
 except ModuleNotFoundError as e:
     raise e
     use_spec = False
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         except FileNotFoundError:
             pass
         for cfg in config:
-            path = "{}/cfg{}".format(config.get_path(),i)
+            path = "{}/{}".format(config.get_path(),config.get_filename(i))
             filename = config.get_filename(i)
             configuration_generator.generate_ad_file(cfg, path, p, filename)
             i += 1
@@ -143,7 +143,9 @@ if __name__ == '__main__':
             if use_spec:
                 #DOn't download if no spec is configured
                 download_cfg(path, filename + ".txt")
-                do_basic_sweep(specan,output_folder=path,span_MHz=config.get_span_MHz(),filename = filename)
+                do_basic_sweep(specan,output_folder=path,span_MHz=config.get_span_MHz(),filename = filename,
+                               rbw_khz=config.get_rbw_kHz())
+                store_config_string(specan,output_folder=path,filename=filename)
     if use_spec:
         disconnect(specan)
     stopTime = time()
