@@ -7,6 +7,13 @@ class generic_configuration:
         self.path = "defaultPath"
         self.file_prefix = "Config"
         self.rbw = 100e3
+        self.span = 6e9
+
+    def get_span_MHz(self):
+        return self.span / 1e6
+
+    def set_span(self,span):
+        self.span = span
 
     def set_prefix(self,prefix):
         self.file_prefix = prefix

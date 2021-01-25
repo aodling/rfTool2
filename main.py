@@ -15,6 +15,7 @@ except ModuleNotFoundError:
     print("Ignoring plots")
 
 from example_setups import single_tone_config
+from example_setups import single_tone_config_10G
 from example_setups.rfsignal import rfsignal
 from example_setups.temp_config import temp_config
 from example_setups.temp_small_config import temp_small_config
@@ -25,7 +26,8 @@ from pathlib import Path
 use_spec = True
 try:
     from rs_integration.rs_integration import instrument_init, clear_specan, do_basic_sweep, disconnect
-except ModuleNotFoundError:
+except ModuleNotFoundError as e:
+    raise e
     use_spec = False
 
 
@@ -114,11 +116,13 @@ if __name__ == '__main__':
     dc  = single_tone_config.default_config()
     stc = single_tone_config.single_tone_config()
     ttc = doble_tone.two_tone_config()
+    tenc = single_tone_config_10G.single_tone_config_10G()
     path = "tmpout"
     filename = "testfile1.txt"
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
-    confs_to_run = [dc, stc, ttc]
+    confs_to_run = [dc]
+    #confs_to_run = [dc, tenc, stc, ttc]
     if use_spec:
         specan = instrument_init("10.10.0.231")
         print("Clearing data on SPECAN")
@@ -136,10 +140,10 @@ if __name__ == '__main__':
             configuration_generator.generate_ad_file(cfg, path, p, filename)
             i += 1
             # Configure Spec
-            if False: #use_spec:
+            if use_spec:
                 #DOn't download if no spec is configured
                 download_cfg(path, filename + ".txt")
-                do_basic_sweep(specan,output_folder=path,span_MHz=6000,filename = filename)
+                do_basic_sweep(specan,output_folder=path,span_MHz=config.get_span_MHz(),filename = filename)
     if use_spec:
         disconnect(specan)
     stopTime = time()

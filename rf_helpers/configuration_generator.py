@@ -5,10 +5,13 @@ import example_setups.setup
 
 
 def generate_ad_file(cfg: example_setups.setup, path: str, controller: rf_helpers.rf_controller, filename: str) -> int:
-    amp = cfg.amplitude
-    freq = cfg.frequency
-    print("Doing configuration with f={} at {} dBFS".format(freq,amp))
-    samples = controller.get_samples(freq, amp)
+    print("Doing configuration with signals:")
+    for s in cfg.get_signals():
+        amp = s.amplitude
+        freq = s.frequency / 1e6
+        print("  f={} MHz at {} dBFS".format(freq, amp))
+
+    samples = controller.get_samples(cfg.get_signals())
     print("Creating directory {}".format(path))
     pathlib.Path(path).mkdir(parents = True, exist_ok = True)
     adfile = filename + ".txt"
