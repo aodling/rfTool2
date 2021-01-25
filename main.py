@@ -122,7 +122,7 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
     confs_to_run = [dc]
-    #confs_to_run = [dc, tenc, stc, ttc]
+    confs_to_run = [dc, tenc, stc, ttc]
     if use_spec:
         specan = instrument_init("10.10.0.231")
         print("Clearing data on SPECAN")
