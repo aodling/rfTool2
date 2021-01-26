@@ -6,6 +6,7 @@ from pathlib import Path
 
 from RsInstrument import *  # The RsInstrument package is hosted on pypi.org, see Readme.txt for more details
 from time import time
+import os
 
 
 def instrument_init(ipaddr: str):
@@ -67,16 +68,25 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     t = time()
     trace = specan.query_bin_or_ascii_float_list('FORM ASC;:TRAC? TRACE1')  # Query ascii array of floats
     print(f'Instrument returned {len(trace)} points in the ascii trace, query duration {time() - t:.3f} secs')
-    with open(Path(output_folder) / "{}.trace".format(filename),'w') as fp:
-        for e in trace:
 
+    if not os.path.exists(Path(output_folder) / "data_trace"):
+        os.makedirs(Path(output_folder) / "data_trace")
+        os.makedirs(Path(output_folder) / "bintrace")
+        os.makedirs(Path(output_folder) / "SA_screendump")
+        os.makedirs(Path(output_folder) / "sa_config")
+
+
+    with open(Path(output_folder) / "data_trace" / "{}.trace".format(filename),'w') as fp:
+        for e in trace:
             fp.write(str(e) + "\n")
     t = time()
     specan.bin_float_numbers_format = BinFloatFormat.Single_4bytes  # This tells the driver in which format to expect the binary float data
     trace = specan.query_bin_or_ascii_float_list(
         'FORM REAL,32;:TRAC? TRACE1')  # Query binary array of floats - the query function is the same as for the ASCII format
 
-    with open(Path(output_folder) / "{}.bintrace".format(filename),'w') as fp:
+
+
+    with open(Path(output_folder) / "bintrace" / "{}.bintrace".format(filename),'w') as fp:
         for e in trace:
             fp.write(str(e) + "\n")
     print(f'Instrument returned {len(trace)} points in the binary trace, query duration {time() - t:.3f} secs')
@@ -95,7 +105,7 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     specan.write_str(r"MMEM:NAME 'c:\temp\Dev_Screenshot.png'")
     specan.write_str("HCOP:IMM")  # Make the screenshot now
     specan.query_opc()  # Wait for the screenshot to be saved
-    p = Path(output_folder) / "{}_meas.png".format(filename)
+    p = Path(output_folder) / "SA_screendump" / "{}.png".format(filename)
     specan.read_file_from_instrument_to_pc(r"c:\temp\Dev_Screenshot.png",
                                            str(p.absolute()))  # Transfer the instrument file to the PC
     print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
@@ -115,7 +125,7 @@ def store_config_string(specan,
     s += "Span,{}\n".format(span)
     s += "Att,{}\n".format(att)
 
-    p = Path(output_folder) / "{}_sa_config.txt".format(filename)
+    p = Path(output_folder) / "sa_config" / "{}.txt".format(filename)
     with open(p,'w') as fp:
         fp.write(s)
 

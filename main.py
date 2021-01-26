@@ -122,7 +122,7 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
     confs_to_run = [dc]
-    #confs_to_run = [dc, tenc, stc, ttc]
+    confs_to_run = [dc, tenc, stc, ttc]
     if use_spec:
         specan = instrument_init("10.10.0.231")
         print("Clearing data on SPECAN")
@@ -147,9 +147,9 @@ if __name__ == '__main__':
                     reflev = 0
                 else:
                     reflev = -20
-                do_basic_sweep(specan,output_folder=path,span_MHz=config.get_span_MHz(),filename = filename,
+                do_basic_sweep(specan,output_folder=config.get_path(),span_MHz=config.get_span_MHz(),filename = filename,
                                rbw_khz=config.get_rbw_kHz(),rlev=reflev)
-                store_config_string(specan,output_folder=path,filename=filename)
+                store_config_string(specan,output_folder=config.get_path(),filename=filename)
     if use_spec:
         disconnect(specan)
     stopTime = time()

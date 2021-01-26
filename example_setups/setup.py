@@ -31,5 +31,5 @@ class setup:
         #TODO: Implement something useful
         r = ""
         for s in self.get_signals():
-            r += "_F{}_MHz_P{}_dBFS_".format(int(s.frequency/1e6),s.amplitude)
+            r += "_F{:04d}_MHz_P{}_dBFS_".format(int(s.frequency/1e6),s.amplitude)
         return r
