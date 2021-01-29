@@ -38,6 +38,9 @@ class generic_configuration:
     def __iter__(self):
         return self.config_list.__iter__()
 
+    def get_cfg_length(self):
+        print("Configuration '{}' has {} elements".format(self.name,len(self.config_list)))
+
     def print_configuration(self):
         ret = "Configuration \"{}\" is :\n".format(self.name)
         i = 0

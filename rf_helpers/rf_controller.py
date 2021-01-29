@@ -30,7 +30,7 @@ class rfController:
             A = self.resolution * 10 ** (dBFS / 20)
             freq = self.get_real_frequency(frequency)
             for i in range(0, self.length):
-                y[i] += int(A * sin(2 * pi * freq * i * self.Ts))
+                y[i] += int(round(A * sin(2 * pi * freq * i * self.Ts)))
                 if y[i] > self.get_max_mag():
                     y[i] = self.get_max_mag()
                 elif y[i] < - self.get_max_mag():
@@ -38,6 +38,8 @@ class rfController:
         return y
 
     def get_real_frequency(self, frequency) -> float:
+        if frequency == 0:
+            return 0.0
         T = 1 / frequency
         Treal = round(self._tot_time() / T) / self._tot_time()
         freq = Treal

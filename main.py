@@ -52,11 +52,11 @@ def download_cfg(d,filename : str):
     print(cmd)
     #print(" ".join(cmd))
     print("Downloading config {}".format(d))
-    subprocess.run(cmd, timeout=100)
+    r = subprocess.run(cmd, timeout=100, text=True, capture_output=True)
     print("Download Completed. Loading vector...")
     cmdrun = ["ssh","-i", "C:\\MinGW\\msys\\1.0\\home\\TRx\\.ssh\\id_rsa", "root@192.168.0.10",
               "./ad9083_xtra/app_ads9/debug/ad9081_xtra tx --file datat.txt"]
-    subprocess.run(cmdrun,timeout = 1000)
+    subprocess.run(cmdrun,timeout = 1000, text=True, capture_output=True)
     print("Downloaded vector.")
 
 # Press the green button in the gutter to run the script.
@@ -123,6 +123,9 @@ if __name__ == '__main__':
     i = 0
     confs_to_run = [dc]
     confs_to_run = [dc, tenc, stc, ttc]
+    confs_to_run = [dc, ttc]
+    for c in confs_to_run:
+        c.get_cfg_length()
     if use_spec:
         specan = instrument_init("10.10.0.231")
         print("Clearing data on SPECAN")

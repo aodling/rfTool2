@@ -13,7 +13,7 @@ class two_tone_config(generic_configuration):
         frequencies = list()
         for i in range(1, 100):
             frequencies.append(i * 5e7)
-        amplitudes = [0, -3, -6, -20]
+        amplitudes = [0, -3, -6,-9, -20]
         separation = [1e6, 1e7, 1e8]
         for a in amplitudes:
             for f in frequencies:

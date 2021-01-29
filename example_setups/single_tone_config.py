@@ -26,7 +26,7 @@ class single_tone_config(generic_configuration):
 class default_config(generic_configuration):
     def __init__(self):
         super().__init__()
-        super().set_path("defaultConfig2")
+        super().set_path("defaultConfig3")
         super().set_rbw(100e3)
         frequencies = list([35e8,36e8])
         amplitudes = [-3,-20]
