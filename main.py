@@ -4,8 +4,9 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import shutil
 import subprocess
+
 from example_setups import doble_tone
-from time import time
+from time import time, sleep
 from example_setups import single_tone_config
 from example_setups import single_tone_config_10G
 from example_setups.rfsignal import rfsignal
@@ -125,8 +126,9 @@ if __name__ == '__main__':
     filename = "testfile1.txt"
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
-    confs_to_run = [dc]
-    # confs_to_run = [dc, tenc, stc, ttc]
+    sleep(10)
+    # confs_to_run = [dc]
+    confs_to_run = [dc, tenc, stc, ttc]
     # confs_to_run = [dc, ttc]
     for c in confs_to_run:
         c.get_cfg_length()
