@@ -52,7 +52,7 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
     specan.write_str('BAND {} kHz'.format(int(rbw_khz)))  # Setting the RBW
     specan.write_str('BAND:VID {} kHz'.format(int(rbw_khz)))  # Setting the VBW
-    specan.write_str('SWE:POIN 65537')  # Setting the sweep points
+    specan.write_str('SWE:POIN 65536')  # Setting the sweep points
     specan.query_opc()  # Using *OPC? query waits until all the instrument settings are finished
     # -----------------------------------------------------------
     # SyncPoint 'SettingsApplied' - all the settings were applied
