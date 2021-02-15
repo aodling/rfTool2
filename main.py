@@ -126,12 +126,16 @@ if __name__ == '__main__':
     filename = "testfile1.txt"
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
-    sleep(10)
-    # confs_to_run = [dc]
+
     confs_to_run = [dc, tenc, stc, ttc]
-    # confs_to_run = [dc, ttc]
+    confs_to_run = [dc, ttc]
+    confs_to_run = [dc]
+    confs_to_run = [dc, tenc, stc]
+    cvs_hdr = "freq,pwr,fmeas0,pwr0,fmeas1,pwr1,fmeas2,pwr2,fmeas3,pwr3,fmeas4,pwr4"
+
     for c in confs_to_run:
         c.get_cfg_length()
+    sleep(5)
     if use_spec:
         specan = instrument_init("10.10.0.231")
         print("Clearing data on SPECAN")
@@ -143,6 +147,11 @@ if __name__ == '__main__':
             shutil.rmtree(config.get_path())
         except FileNotFoundError:
             pass
+        #Write CVS File
+        cvs_filename = Path(config.get_path()) / "maxpoints.cvs"
+        Path(config.get_path()).mkdir(parents=True,exist_ok=True)
+        with open(cvs_filename,'w') as fp:
+            fp.write(cvs_hdr + "\n")
         for cfg in config:
             path = "{}/{}".format(config.get_path(), "gen_data")  # config.get_filename(i))
             filename = config.get_filename(i)
@@ -156,9 +165,18 @@ if __name__ == '__main__':
                     reflev = 0
                 else:
                     reflev = -20
-                do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=config.get_span_MHz(),
-                               filename=filename,
-                               rbw_khz=config.get_rbw_kHz(), rlev=reflev)
+                maxList = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=config.get_span_MHz(),
+                                         filename=filename,
+                                         rbw_khz=config.get_rbw_kHz(), rlev=reflev)
+                mp = cfg.get_max_power()
+                f = cfg.get_freqs()
+                print(maxList)
+                cvsstr = "{},{}".format(f[0],mp)
+                for e in maxList:
+                    cvsstr += ",{},{}".format(e[0],e[1])
+                cvsstr += "\n"
+                with open(cvs_filename,'a') as fp:
+                    fp.write(cvsstr)
                 store_config_string(specan, output_folder=config.get_path(), filename=filename)
     if use_spec:
         disconnect(specan)
