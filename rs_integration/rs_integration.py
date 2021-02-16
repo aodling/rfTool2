@@ -42,18 +42,21 @@ def clear_specan(specan, UpdateDisplay: bool = False):
 # Basic Settings:
 # -----------------------------------------------------------
 
-def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
+def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
                    rlev = 0.0,
                    rbw_khz = 100,
                    output_folder = r"C:\Temp\\" ,
                    filename = "measured",
                    M1freq = None):
     specan.write_str('DISP:WIND:TRAC:Y:RLEV {:.1f}'.format(rlev))  # Setting the Reference Level
-    specan.write_str('FREQ:CENT {:.1f} GHz'.format(center_freq))  # Setting the center frequency
-    specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
-    specan.write_str('BAND {} kHz'.format(int(rbw_khz)))  # Setting the RBW
-    specan.write_str('BAND:VID {} kHz'.format(int(rbw_khz)))  # Setting the VBW
-    specan.write_str('SWE:POIN 100001')  # Setting the sweep points
+    specan.write_str('FREQ:CENT {:.4f} GHz'.format(center_freq/1e9))  # Setting the center frequency
+    specan.write_str('FREQ:SPAN {:.2f} MHz'.format(span_MHz))  # Setting the span
+    specan.write_str('BAND {:.2f} kHz'.format(rbw_khz))  # Setting the RBW
+    specan.write_str('BAND:VID {:.2f} kHz'.format(rbw_khz))  # Setting the VBW
+    sweepPoints = 100001
+    if rbw_khz < 10: # for narrow sweeps, less points. Guess illegal otherwise
+        sweepPoints = 10001
+    specan.write_str('SWE:POIN {:d}'.format(sweepPoints))  # Setting the sweep points
     specan.query_opc()  # Using *OPC? query waits until all the instrument settings are finished
     # -----------------------------------------------------------
     # SyncPoint 'SettingsApplied' - all the settings were applied
