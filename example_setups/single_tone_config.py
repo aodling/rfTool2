@@ -9,7 +9,7 @@ class single_tone_config(generic_configuration):
         super().__init__()
         super().set_path("singleToneConfigs")
         super().set_prefix("CW")
-        super().set_rbw(100e3)
+        super().set_rbw(50e3)
         frequencies = list([1e6])
         for i in range(1, 501):
             frequencies.append(i * 1e7)
@@ -27,8 +27,8 @@ class default_config(generic_configuration):
     def __init__(self):
         super().__init__()
         super().set_path("defaultConfig4")
-        super().set_rbw(100e3)
-        frequencies = list([35e8,36e8])
+        super().set_rbw(50e3)
+        frequencies = list([35e8,4e9])
         amplitudes = [-3,-20]
         for a in amplitudes:
             for f in frequencies:

@@ -130,8 +130,8 @@ if __name__ == '__main__':
     confs_to_run = [dc, tenc, stc, ttc]
     confs_to_run = [dc, ttc]
     confs_to_run = [dc]
-    #confs_to_run = [dc, tenc, stc]
-    cvs_hdr = "freq,pwr,fmeas0,pwr0,fmeas1,pwr1,fmeas2,pwr2,fmeas3,pwr3,fmeas4,pwr4"
+    # confs_to_run = [dc, tenc, stc]
+    cvs_hdr = "freq,pwr,fmeas0,pwr0,fmeas1,pwr1,fmeas2,pwr2,fmeas3,pwr3,fmeas4,pwr4,fmeas5,pwr5"
 
     for c in confs_to_run:
         c.get_cfg_length()
@@ -165,9 +165,12 @@ if __name__ == '__main__':
                     reflev = 0
                 else:
                     reflev = -20
+                f = cfg.get_freqs()
+                freal = p.get_real_frequency(f[0])
+                print(freal)
                 maxList = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=config.get_span_MHz(),
                                          filename=filename,
-                                         rbw_khz=config.get_rbw_kHz(), rlev=reflev)
+                                         rbw_khz=config.get_rbw_kHz(), rlev=reflev)#, M1freq=freal)
                 mp = cfg.get_max_power()
                 f = cfg.get_freqs()
                 freal = p.get_real_frequency(f[0])

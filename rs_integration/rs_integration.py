@@ -46,13 +46,14 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
                    rlev = 0.0,
                    rbw_khz = 100,
                    output_folder = r"C:\Temp\\" ,
-                   filename = "measured"):
+                   filename = "measured",
+                   M1freq = None):
     specan.write_str('DISP:WIND:TRAC:Y:RLEV {:.1f}'.format(rlev))  # Setting the Reference Level
     specan.write_str('FREQ:CENT {:.1f} GHz'.format(center_freq))  # Setting the center frequency
     specan.write_str('FREQ:SPAN {:.1f} MHz'.format(span_MHz))  # Setting the span
     specan.write_str('BAND {} kHz'.format(int(rbw_khz)))  # Setting the RBW
     specan.write_str('BAND:VID {} kHz'.format(int(rbw_khz)))  # Setting the VBW
-    specan.write_str('SWE:POIN 65536')  # Setting the sweep points
+    specan.write_str('SWE:POIN 100001')  # Setting the sweep points
     specan.query_opc()  # Using *OPC? query waits until all the instrument settings are finished
     # -----------------------------------------------------------
     # SyncPoint 'SettingsApplied' - all the settings were applied
@@ -93,10 +94,16 @@ def do_basic_sweep(specan, center_freq : float = 3 , span_MHz : float = 200,
     # -----------------------------------------------------------
     # Setting the marker to max and querying the X and Y
     # -----------------------------------------------------------
-    for m in range (1,6):
+    lowIndex = 1 #Start index for max search
+    if M1freq:
+        lowIndex = 2
+        specan.write_str_with_opc(
+            'CALC1:MARK1:X {:.4f} kHz'.format(M1freq / 1e3))
+        print('CALC1:MARK1:X {:.4f} kHz'.format(M1freq / 1e3))
+    for m in range (lowIndex,7):
         specan.write_str_with_opc(
             'CALC1:MARK{}:MAX'.format(int(m)))  # Set the marker to the maximum point of the entire trace, wait for it to be set
-        for n in range(1,m):
+        for n in range(lowIndex,m):
             specan.write_str_with_opc('CALC1:MARK{}:MAX:NEXT'.format(int(m)))
     # specan.write_str_with_opc('CALC1:MARK3:MAX:NEXT')
     # specan.write_str_with_opc('CALC1:MARK4:MAX:NEXT')

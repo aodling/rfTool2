@@ -12,8 +12,8 @@ class single_tone_config_10G(generic_configuration):
         super().set_rbw(100e3)
         super().set_span(10e9)
         frequencies = list([1e6, 1e7])
-        for i in range(1, 10):
-            frequencies.append(i * 5e8)
+        for i in range(1, 120):
+            frequencies.append(i * 5e7)
         amplitudes = [0, -6]
         for f in frequencies:
             for a in amplitudes:
