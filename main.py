@@ -128,8 +128,8 @@ if __name__ == '__main__':
     i = 0
 
     confs_to_run = [dc, tenc, stc, ttc]
-    confs_to_run = [dc, ttc]
-    confs_to_run = [dc]
+    # confs_to_run = [dc, ttc]
+    # confs_to_run = [dc]
     # confs_to_run = [dc, tenc, stc]
     cvs_hdr = "freq,pwr,fmeas0,pwr0,fmeas1,pwr1,fmeas2,pwr2,fmeas3,pwr3,fmeas4,pwr4,fmeas5,pwr5"
 
