@@ -11,7 +11,7 @@ class two_tone_config(generic_configuration):
         super().set_prefix("2TONE")
         super().set_rbw(100e3)
         frequencies = list()
-        for i in range(1, 100):
+        for i in range(3, 100):
             frequencies.append(i * 5e7)
         amplitudes = [0, -3, -6,-9, -20]
         separation = [1e6, 1e7, 1e8]

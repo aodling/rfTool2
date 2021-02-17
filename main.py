@@ -127,7 +127,7 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
 
-    confs_to_run = [dc,ttc, tenc, stc ]
+    confs_to_run = [stc, ttc, tenc ]
     # confs_to_run = [dc, ttc]
     # confs_to_run = [dc]
     # confs_to_run = [dc, tenc, stc]
@@ -148,8 +148,8 @@ if __name__ == '__main__':
         except FileNotFoundError:
             pass
         #Write CVS File
-        cvs_filename = Path(config.get_path()) / "maxpoints.cvs"
-        cvs_filename_narrow = Path(config.get_path()) / "maxpoints_narrow.cvs"
+        cvs_filename = Path(config.get_path()) / "maxpoints.csv"
+        cvs_filename_narrow = Path(config.get_path()) / "maxpoints_narrow.csv"
         Path(config.get_path()).mkdir(parents=True,exist_ok=True)
         with open(cvs_filename,'w') as fp:
             fp.write(cvs_hdr + "\n")
@@ -183,11 +183,14 @@ if __name__ == '__main__':
                     span = 1.1 * (f[1]-f[0])
                     span /= 1e6
                     cf   = (f[1] + f[0]) / 2
-
+                if span > 2:
+                    rbw = 50
+                else:
+                    rbw = 0.1
                 maxListZoomed = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=span,
                                                center_freq=cf,
                                          filename="2_MHzSpan_" + filename,
-                                         rbw_khz=0.1, rlev=reflev)#, M1freq=freal)
+                                         rbw_khz=rbw, rlev=reflev)#, M1freq=freal)
                 mp = cfg.get_max_power()
                 f = cfg.get_freqs()
                 freal = p.get_real_frequency(f[0])

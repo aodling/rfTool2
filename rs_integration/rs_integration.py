@@ -54,14 +54,14 @@ def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
     specan.write_str('BAND {:.2f} kHz'.format(rbw_khz))  # Setting the RBW
     specan.write_str('BAND:VID {:.2f} kHz'.format(rbw_khz))  # Setting the VBW
     sweepPoints = 100001
-    if rbw_khz < 10: # for narrow sweeps, less points. Guess illegal otherwise
+    if span_MHz < 500: # for narrow sweeps, less points. Guess illegal otherwise
         sweepPoints = 10001
     specan.write_str('SWE:POIN {:d}'.format(sweepPoints))  # Setting the sweep points
     specan.query_opc()  # Using *OPC? query waits until all the instrument settings are finished
     # -----------------------------------------------------------
     # SyncPoint 'SettingsApplied' - all the settings were applied
     # -----------------------------------------------------------
-    specan.VisaTimeout = 2000  # Sweep timeout - set it higher than the instrument acquisition time
+    specan.VisaTimeout = 4000  # Sweep timeout - set it higher than the instrument acquisition time
     specan.write_str_with_opc('INIT')  # Start the sweep and wait for it to finish
     # -----------------------------------------------------------
     # SyncPoint 'AcquisitionFinished' - the results are ready
