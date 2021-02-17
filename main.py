@@ -127,9 +127,9 @@ if __name__ == '__main__':
     configuration_generator.generate_ad_file(stc.config_list[0], path, p, filename)
     i = 0
 
-    confs_to_run = [dc, tenc, stc, ttc]
+    confs_to_run = [dc,ttc, tenc, stc ]
     # confs_to_run = [dc, ttc]
-    confs_to_run = [dc]
+    # confs_to_run = [dc]
     # confs_to_run = [dc, tenc, stc]
     cvs_hdr = "freq,pwr,fmeas0,pwr0,fmeas1,pwr1,fmeas2,pwr2,fmeas3,pwr3,fmeas4,pwr4,fmeas5,pwr5"
 
@@ -149,9 +149,13 @@ if __name__ == '__main__':
             pass
         #Write CVS File
         cvs_filename = Path(config.get_path()) / "maxpoints.cvs"
+        cvs_filename_narrow = Path(config.get_path()) / "maxpoints_narrow.cvs"
         Path(config.get_path()).mkdir(parents=True,exist_ok=True)
         with open(cvs_filename,'w') as fp:
             fp.write(cvs_hdr + "\n")
+        with open(cvs_filename_narrow, 'w') as fp:
+                fp.write(cvs_hdr + "\n")
+
         for cfg in config:
             path = "{}/{}".format(config.get_path(), "gen_data")  # config.get_filename(i))
             filename = config.get_filename(i)
@@ -171,19 +175,35 @@ if __name__ == '__main__':
                 maxList = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=config.get_span_MHz(),
                                          filename=filename,
                                          rbw_khz=config.get_rbw_kHz(), rlev=reflev)#, M1freq=freal)
-                maxListZoomed = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=2,
-                                               center_freq=freal,
+                # Do a zoomed Sweep. If only one freq, center around that freq. Else: CF = mean(freq)
+                # span = f[1] - f[0]
+                span = 2;
+                cf = freal;
+                if len(f) > 1:
+                    span = 1.1 * (f[1]-f[0])
+                    span /= 1e6
+                    cf   = (f[1] + f[0]) / 2
+
+                maxListZoomed = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=span,
+                                               center_freq=cf,
                                          filename="2_MHzSpan_" + filename,
                                          rbw_khz=0.1, rlev=reflev)#, M1freq=freal)
                 mp = cfg.get_max_power()
                 f = cfg.get_freqs()
                 freal = p.get_real_frequency(f[0])
-                print(maxList)
+                # print(maxList)
                 cvsstr = "{},{}".format(freal,mp)
                 for e in maxList:
                     cvsstr += ",{},{}".format(e[0],e[1])
                 cvsstr += "\n"
                 with open(cvs_filename,'a') as fp:
+                    fp.write(cvsstr)
+                # Do it again for narrow config
+                cvsstr = "{},{}".format(freal, mp)
+                for e in maxListZoomed:
+                    cvsstr += ",{},{}".format(e[0], e[1])
+                cvsstr += "\n"
+                with open(cvs_filename_narrow, 'a') as fp:
                     fp.write(cvsstr)
                 store_config_string(specan, output_folder=config.get_path(), filename=filename)
     if use_spec:

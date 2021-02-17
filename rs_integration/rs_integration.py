@@ -70,8 +70,9 @@ def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
     # The functions are universal for binary or ascii data format
     # -----------------------------------------------------------
     t = time()
-    trace = specan.query_bin_or_ascii_float_list('FORM ASC;:TRAC? TRACE1')  # Query ascii array of floats
-    print(f'Instrument returned {len(trace)} points in the ascii trace, query duration {time() - t:.3f} secs')
+    # Only read bintrace since it's the same data
+    # trace = specan.query_bin_or_ascii_float_list('FORM ASC;:TRAC? TRACE1')  # Query ascii array of floats
+    # print(f'Instrument returned {len(trace)} points in the ascii trace, query duration {time() - t:.3f} secs')
 
     if not os.path.exists(Path(output_folder) / "data_trace"):
         os.makedirs(Path(output_folder) / "data_trace")
@@ -80,9 +81,9 @@ def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
         os.makedirs(Path(output_folder) / "sa_config")
 
 
-    with open(Path(output_folder) / "data_trace" / "{}.trace".format(filename),'w') as fp:
-        for e in trace:
-            fp.write(str(e) + "\n")
+    #with open(Path(output_folder) / "data_trace" / "{}.trace".format(filename),'w') as fp:
+    #    for e in trace:
+    #        fp.write(str(e) + "\n")
     t = time()
     specan.bin_float_numbers_format = BinFloatFormat.Single_4bytes  # This tells the driver in which format to expect the binary float data
     trace = specan.query_bin_or_ascii_float_list(
@@ -93,7 +94,7 @@ def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
     with open(Path(output_folder) / "bintrace" / "{}.bintrace".format(filename),'w') as fp:
         for e in trace:
             fp.write(str(e) + "\n")
-    print(f'Instrument returned {len(trace)} points in the binary trace, query duration {time() - t:.3f} secs')
+    #print(f'Instrument returned {len(trace)} points in the binary trace, query duration {time() - t:.3f} secs')
     # -----------------------------------------------------------
     # Setting the marker to max and querying the X and Y
     # -----------------------------------------------------------
@@ -133,7 +134,7 @@ def do_basic_sweep(specan, center_freq : float = 3e9 , span_MHz : float = 200,
     p = Path(output_folder) / "SA_screendump" / "{}.png".format(filename)
     specan.read_file_from_instrument_to_pc(r"c:\temp\Dev_Screenshot.png",
                                            str(p.absolute()))  # Transfer the instrument file to the PC
-    print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
+    #print("Instrument screenshot file saved to PC '{}'".format(p.absolute()))
     return  maxList
 def store_config_string(specan,
                    output_folder = r"C:\Temp\\" ,
