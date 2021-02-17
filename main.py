@@ -189,7 +189,7 @@ if __name__ == '__main__':
                     rbw = 0.1
                 maxListZoomed = do_basic_sweep(specan, output_folder=config.get_path(), span_MHz=span,
                                                center_freq=cf,
-                                         filename="2_MHzSpan_" + filename,
+                                         filename="{}_MHzSpan_".format(span) + filename,
                                          rbw_khz=rbw, rlev=reflev)#, M1freq=freal)
                 mp = cfg.get_max_power()
                 f = cfg.get_freqs()
